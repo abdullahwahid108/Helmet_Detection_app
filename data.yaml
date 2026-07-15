@@ -1,0 +1,9 @@
+# YOLO dataset config for Helmet Detection
+# Paths are relative to this file's location (project root)
+
+train: data/images/train
+val: data/images/val
+test: data/images/test
+
+nc: 2
+names: ['helmet', 'no_helmet']

@@ -1,0 +1,13 @@
+venv/
+__pycache__/
+*.pyc
+runs/
+data/raw/
+data/images/
+data/labels/
+labels_backup_*/
+images_old/
+labels_old/
+*.cache
+temp_uploaded_video.mp4
+temp_annotated_video.mp4

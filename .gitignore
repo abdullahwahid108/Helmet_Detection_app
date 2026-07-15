@@ -3,8 +3,8 @@ __pycache__/
 *.pyc
 runs/
 data/raw/
-data/images/
-data/labels/
+data/images_older/
+data/labels_older/
 labels_backup_*/
 images_old/
 labels_old/

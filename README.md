@@ -187,4 +187,6 @@ Features: image upload, video upload, live webcam, confidence threshold slider,
 detection stats (count/time/confidence), export annotated image, plus bonus
 dashboard + detection history + dark theme.
 
+🎥 **Video walkthrough**: [Watch on YouTube](https://youtu.be/qlr2nPWFlNw)
+
 Put your trained weights at `app/model/best.pt` before running.

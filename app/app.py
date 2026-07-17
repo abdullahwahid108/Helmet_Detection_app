@@ -38,7 +38,7 @@ DARK_CSS = """
 st.markdown(DARK_CSS, unsafe_allow_html=True)
 
 MODEL_PATH = Path(__file__).parent / "model" / "best.pt"
-CLASS_COLORS = {"helmet": (74, 222, 128), "no_helmet": (248, 113, 113), "person": (250, 204, 21)}
+CLASS_COLORS = {"helmet": (74, 222, 128), "no_helmet": (248, 113, 113)}
 
 
 # ---------------------------------------------------------------------------
@@ -72,7 +72,6 @@ def log_detection(source_type, counts, avg_conf, proc_time):
         "source": source_type,
         "helmet": counts.get("helmet", 0),
         "no_helmet": counts.get("no_helmet", 0),
-        "person": counts.get("person", 0),
         "total": sum(counts.values()),
         "avg_confidence": round(avg_conf, 3),
         "processing_time_ms": round(proc_time * 1000, 1),
@@ -87,7 +86,7 @@ def run_detection(model, image_bgr, conf_threshold):
     results = model.predict(image_bgr, conf=conf_threshold, verbose=False)[0]
     proc_time = time.time() - start
 
-    counts = {"helmet": 0, "no_helmet": 0, "person": 0}
+    counts = {"helmet": 0, "no_helmet": 0}
     confidences = []
     annotated = image_bgr.copy()
 
@@ -112,12 +111,12 @@ def run_detection(model, image_bgr, conf_threshold):
 
 
 def show_stats(counts, avg_conf, proc_time):
-    c1, c2, c3, c4 = st.columns(4)
+    c1, c2, c3, c4, c5 = st.columns(5)
     total = sum(counts.values())
     for col, label, value in zip(
-        [c1, c2, c3, c4],
-        ["Total Objects", "Avg Confidence", "Processing Time", "No-Helmet Count"],
-        [total, f"{avg_conf:.2%}", f"{proc_time*1000:.0f} ms", counts.get("no_helmet", 0)],
+        [c1, c2, c3, c4, c5],
+        ["Total Objects", "Helmet Count", "No-Helmet Count", "Avg Confidence", "Processing Time"],
+        [total, counts.get("helmet", 0), counts.get("no_helmet", 0), f"{avg_conf:.2%}", f"{proc_time*1000:.0f} ms"],
     ):
         col.markdown(
             f'<div class="metric-card"><div class="metric-value">{value}</div>'
@@ -126,8 +125,7 @@ def show_stats(counts, avg_conf, proc_time):
         )
     st.write("")
     st.write(f"Breakdown — helmet: **{counts.get('helmet',0)}**, "
-             f"no_helmet: **{counts.get('no_helmet',0)}**, "
-             f"person: **{counts.get('person',0)}**")
+         f"no_helmet: **{counts.get('no_helmet',0)}**")
 
 
 def download_button_for_image(annotated_bgr, filename):
@@ -149,7 +147,7 @@ mode = st.sidebar.radio(
 )
 conf_threshold = st.sidebar.slider("Confidence Threshold", 0.05, 0.95, 0.25, 0.05)
 st.sidebar.markdown("---")
-st.sidebar.caption("Classes: helmet · no_helmet · person")
+st.sidebar.caption("Classes: helmet · no_helmet")
 
 model = get_model() if mode not in ("Dashboard", "Detection History") else None
 
@@ -198,7 +196,7 @@ elif mode == "Video Upload":
         progress = st.progress(0)
         stat_placeholder = st.empty()
 
-        all_counts = {"helmet": 0, "no_helmet": 0, "person": 0}
+        all_counts = {"helmet": 0, "no_helmet": 0}
         all_confidences = []
         total_proc_time = 0.0
         frame_idx = 0
@@ -256,7 +254,7 @@ elif mode == "Webcam (Live)":
         def __init__(self):
             self.model = get_model()
             self.conf = conf_threshold
-            self.last_counts = {"helmet": 0, "no_helmet": 0, "person": 0}
+            self.last_counts = {"helmet": 0, "no_helmet": 0}
 
         def recv(self, frame):
             img = frame.to_ndarray(format="bgr24")
